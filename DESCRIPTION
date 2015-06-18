@@ -1,0 +1,20 @@
+Package: langcog
+Type: Package
+Title: Language and Cognition Lab Things
+Version: 0.1
+Authors@R: c(person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
+             person("Michael", "Frank", email = "mcfrank@stanford.edu", role = c("aut")),
+             person("Dan", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut")))
+Description: Collection of useful things used by Language and Cognition Lab.
+Depends: R (>= 3.1.2)
+License: MIT + file LICENSE
+URL: http://github.com/langcog/langcog
+BugReports: http://github.com/langcog/langcog/issues
+LazyData: true
+Imports: 
+  stats,
+  dplyr,
+  ggplot2,
+  quadprog
+Suggests:
+  scales
