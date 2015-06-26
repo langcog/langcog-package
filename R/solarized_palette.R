@@ -53,7 +53,7 @@ solarized_palette <- function(num_values) {
 #'   geom_point() +
 #'   scale_colour_solarized()
 scale_colour_solarized <- function(...) {
-    ggplot2::discrete_scale("colour", "solarized", solarized_palette)
+    ggplot2::discrete_scale("colour", "solarized", solarized_palette, ...)
 }
 
 #' @rdname scale_colour_solarized
@@ -63,5 +63,5 @@ scale_color_solarized <- function(...) {
 
 #' @rdname scale_colour_solarized
 scale_fill_solarized <- function(...) {
-    ggplot2::discrete_scale("fill", "solarized", solarized_palette)
+    ggplot2::discrete_scale("fill", "solarized", solarized_palette, ...)
 } 

@@ -27,8 +27,8 @@ sem <- function(x, na.rm = FALSE) {
 #'   
 #' @examples
 #' x <- rnorm(1000)
-#' ci.lower(x)
-ci.lower <- function(x) {
+#' ci_lower(x)
+ci_lower <- function(x) {
   quantile(x, 0.025)
 }
 
@@ -41,8 +41,8 @@ ci.lower <- function(x) {
 #'   
 #' @examples
 #' x <- rnorm(1000)
-#' ci.upper(x)
-ci.upper <- function(x) {
+#' ci_upper(x)
+ci_upper <- function(x) {
   quantile(x, 0.975)
 }
 
