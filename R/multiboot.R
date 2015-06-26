@@ -24,7 +24,7 @@ multi.boot <- function(x, statistics = c("ci.low", "ci.high"),
   formulas <- sapply(statistics, function(x) {as.formula(paste0("~", x))})
   
   one.sample <- function() {
-    do.call(summary.function,list(sample(x, replace = TRUE)))
+    do.call(summary.function, list(sample(x, replace = TRUE)))
   }
   
   all.samples <- data.frame(sample = replicate(nboot, one.sample())) %>%
@@ -78,4 +78,63 @@ multi.boot.df <- function(df, col, statistics = c("ci.low","ci.high"),
   boot.df %>%
     select_("-boot")
 
+}
+
+
+one.sample <- function(df, summary.function, summary.groups, replace) {
+  function(k) {
+    if (!is.null(summary.groups)) {
+      df %<>%
+        group_by_(.dots = summary.groups)
+    }
+    df %>%
+      sample_frac(replace = replace) %>%
+      summary.function() %>%
+      mutate(sample = k)
+  }
+}
+
+
+multi.boot <- function(df, summary.function, summary.groups = NULL,
+                       statistics, statistics.groups = summary.groups,
+                       nboot = 1000, replace = TRUE) {
+  all.samples <- map(1:nboot, one.sample(df, summary.function, summary.groups, replace)) %>%
+    bind_rows()
+  
+  if (!is.null(statistics.groups)) {
+    all.samples %<>% group_by_(.dots = statistics.groups)
+  }
+  
+    all.samples %>% statistics()
+}
+
+
+gauss.1 <- data.frame(value = rnorm(1000, mean = 0, sd = 1),
+                     condition = 1)
+gauss.2 <- data.frame(value = rnorm(1000, mean = 2, sd = 3),
+                     condition = 2)
+estimates <- multi.boot.df(df, "value", statistics = c("ci.low", "mean", "ci.high"))
+
+multi.boot(df = bind_rows(gauss.1, gauss.2),
+           summary.function = function(df) summarise(df, mean = mean(value)),
+           summary.groups = c("condition"),
+           statistics = function(df) summarise_each(df,
+                                                    funs("ci.upper", "mean", "ci.lower"), 
+                                                    mean),
+           #statistics.groups = NULL,
+           nboot = 100, replace = T)
+
+multi.boot.wrapper <- function(df, summary.function.name, col, summary.groups = NULL,
+                               statistics.names, statistics.groups = NULL, nboot, replace) {
+  dots = list(~boot[[fun]])
+  boot.df <- boot.df %>%
+    mutate_(.dots = setNames(dots, c(fun)))
+  
+  dots = list(~boot[[fun]])
+  summary.function <- function(df) summarise_(df, .dots = setNames(dots, c(fun)))
+  
+  statistics <- 
+  multi.boot(df, summary.function, summary.groups,
+             statistics, statistics.groups = summary.groups,
+             nboot, replace)
 }
