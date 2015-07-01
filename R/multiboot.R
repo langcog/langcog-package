@@ -103,10 +103,12 @@ multi_boot.logical <- function(data, summary_function = "mean", statistics_funct
 multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL, summary_groups = NULL,
                                   statistics_functions, statistics_groups = summary_groups, 
                                   nboot = 1000, replace = TRUE, ...) {
-
+  
   assertthat::assert_that(typeof(summary_function) %in% c("closure", "character"))
   assertthat::assert_that(typeof(statistics_functions) %in% c("closure", "character"))
   assertthat::assert_that(all(statistics_groups %in% summary_groups))
+  
+  original_groups <- groups(data)
 
   if(typeof(summary_function) == "closure") { # function
     call_summary_function <- summary_function
@@ -139,6 +141,9 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
   all_samples <- sapply(1:nboot, one_sample(data, call_summary_function, summary_groups, replace),
                         simplify = FALSE) %>%
     bind_rows()
+  
+  if(!is.null(original_groups)) all_samples %<>% group_by_(.dots = original_groups) 
+  
   
   if (!is.null(statistics_groups)) {
     all_samples <- all_samples %>% group_by_(.dots = statistics_groups)
