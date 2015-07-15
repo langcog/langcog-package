@@ -127,7 +127,7 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
     statistics_formulas <- sapply(statistics_functions, 
                                   function(x) lazyeval::interp(~fun, fun = x))
     call_statistics_functions <- function(df) summarise_each(df, 
-                                                             funs_(statistics_formulas), sample)
+                                                             funs_(statistics_formulas), summary)
   }
 
   one_sample <- function(df, call_summary_function, summary_groups, replace) {
