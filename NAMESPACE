@@ -1,2 +1,7 @@
 exportPattern("^[[:alpha:]]+")
 import(dplyr)
+
+S3method(multi_boot, data.frame)
+S3method(multi_boot, numeric)
+S3method(multi_boot, logical)
+S3method(predict, clm)

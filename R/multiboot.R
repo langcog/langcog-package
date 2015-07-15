@@ -126,8 +126,8 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
   } else { # string
     statistics_formulas <- sapply(statistics_functions, 
                                   function(x) lazyeval::interp(~fun, fun = x))
-    call_statistics_functions <- function(df) summarise_each_(df, 
-                                                             funs_(statistics_formulas), column)
+    call_statistics_functions <- function(df) summarise_each(df, 
+                                                             funs_(statistics_formulas), sample)
   }
 
   one_sample <- function(df, call_summary_function, summary_groups, replace) {
@@ -141,14 +141,15 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
         call_summary_function() %>%
         mutate(sample = k)
     }
-    return(df)
   }
   
-  all_samples <- lapply(1:nboot, function(x) {one_sample(data, call_summary_function, 
-                                            summary_groups, replace)}) %>%
-    bind_rows()
+  all_samples <- sapply(1:nboot, one_sample(data, call_summary_function, 
+                                            summary_groups, replace),
+                        simplify=FALSE) %>%
+    bind_rows
   
-  if(is.null(summary_groups) & !is.null(original_groups)) all_samples %<>% group_by_(.dots = original_groups) 
+  if(is.null(summary_groups) & !is.null(original_groups)) 
+    all_samples <- group_by_(all_samples,.dots = original_groups) 
   
   if (!is.null(statistics_groups)) {
     all_samples <- all_samples %>% group_by_(.dots = statistics_groups)
