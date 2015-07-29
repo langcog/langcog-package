@@ -15,7 +15,6 @@ r_binary_packages:
   - ggplot2
   - lazyeval
   - quadprog
-  - stats
 
 notifications:
   email:
