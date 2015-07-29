@@ -6,7 +6,16 @@ sudo: required
 
 env:
  global:
-   - CRAN: http://cran.rstudio.com
+   - NOT_CRAN=true
+before_install: echo "options(repos = c(CRAN='http://cran.rstudio.com'))" > ~/.Rprofile
+
+r_binary_packages:
+  - assertthat
+  - dplyr
+  - ggplot2
+  - lazyeval
+  - quadprog
+  - stats
 
 notifications:
   email:
