@@ -56,8 +56,8 @@ ci_upper <- function(x) {
 #'   \emph{p}-value ("\code{***}", "\code{**}", "\code{*}", "\code{.}", or "").
 #'   
 #' @examples
-#' get.stars(0.03)
-get.stars <- function(p) {
+#' get_stars(0.03)
+get_stars <- function(p) {
   if (p < 0.001) return("***")
   if (p < 0.01) return("**")
   if (p < 0.05) return("*")
