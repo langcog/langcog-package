@@ -1,6 +1,6 @@
 #' Scale a matrix with no attributes
 #' 
-#' From \link[here]{http://r.789695.n4.nabble.com/How-to-remove-attributes-from-scale-in-a-matrix-td4671715.html}
+#' From http://r.789695.n4.nabble.com/How-to-remove-attributes-from-scale-in-a-matrix-td4671715.html
 #' 
 #' \code{scale} is exactly the same as normal scale, except without the attributes 
 #' that make \code{\link[base]{scale}} so terrible to work with in functional 

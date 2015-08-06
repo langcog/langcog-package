@@ -14,7 +14,7 @@ scale(x, center = TRUE, scale = TRUE)
 \item{scale}{whether you divide by the SD}
 }
 \description{
-From \link[here]{http://r.789695.n4.nabble.com/How-to-remove-attributes-from-scale-in-a-matrix-td4671715.html}
+From http://r.789695.n4.nabble.com/How-to-remove-attributes-from-scale-in-a-matrix-td4671715.html
 }
 \details{
 \code{scale} is exactly the same as normal scale, except without the attributes

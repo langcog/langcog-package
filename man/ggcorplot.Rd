@@ -10,8 +10,6 @@ ggcorplot(data, var_text_size = 5)
 \item{data}{Data frame or matrix to be plotted.}
 
 \item{var_text_size}{Variable text size.}
-
-\item{cor_text_limits}{Size range for correlation text sizes}
 }
 \description{
 Lightly modified from a post by Mike Lawrence at:

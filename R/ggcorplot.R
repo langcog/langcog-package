@@ -138,7 +138,17 @@ ggcorplot <- function(data,
 }
 
 
-#define a helper function (borrowed from the "ez" package)
+#' Helper function for levels, from the ez package
+#' 
+#' @param x factor
+#' @param new_order The order you want them in
+#' 
+#' @keywords factors
+#' @export
+#' @examples
+#' x <- factor(c("A", "B", "C"))
+#' ezLev(x, c(3,1,2))
+
 ezLev=function(x, new_order){
   for(i in rev(new_order)){
     x=relevel(x,ref=i)
