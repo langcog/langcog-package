@@ -164,6 +164,62 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
   return(booted_vals)
 }
 
+#' Nonparemetric Bootstrap and Empirical central tendency for data frames
+#' Designed to make standard use of \code{multi_boot.data.frame} easier
+#' 
+#' Computes arbitrary bootstrap statistics on univariate data. 
+#' NOTE: Both empirical functions and bootstrapping functions will be computed
+#'  over the grouping variables currently specified for the data frame.
+#' 
+#' @param data A data frame.
+#' @param column A string indicating the column of \code{data} to bootstrap 
+#' @param na.rm A logical indicating whether NAs should be dropped before 
+#'  bootstrapping (defaults to \code{FALSE})
+#' @param empirical_function a string indicating the function to compute and 
+#'  bootstrap over (defaults to \code{mean})
+#' @param statistics_functions A vector of strings that are names of functions
+#'  to be bootstrapped (defaults to \code{c("ci_lower", "ci_upper")})
+#' @param nboot The number of bootstrap samples to take (defaults to \code{1000}).
+#'  
+#' @examples
+#' ## Mean and 95% confidence interval for 1000 samples from two different normal distributions
+#' require(dplyr)
+#' gauss1 <- data.frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
+#' gauss2 <- data.frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+#' ci_lower <- function(x) {quantile(x, 0.025)}
+#' ci_upper <- function(x) {quantile(x, 0.975)}
+#' df <- bind_rows(gauss1, gauss2) %>%
+#'  group_by(condition)
+#' multi_boot_standard(data = df, column = "value")
+multi_boot_standard <- function(data, column, na.rm = FALSE, 
+                                empirical_function = "mean", 
+                                statistics_functions = c("ci_lower", "ci_upper"), 
+                                nboot = 1000) {
+  
+  assertthat::assert_that(typeof(empirical_function) == "character")
+  
+  if(na.rm) {
+    empirical_dots <- list(lazyeval::interp(~fun(arg, na.rm = na.rm), 
+                                        fun = as.name(empirical_function), 
+                                        arg = as.name(column)))
+  } else {
+    empirical_dots <- list(lazyeval::interp(~fun(arg), 
+                                            fun = as.name(empirical_function), 
+                                            arg = as.name(column)))
+  }
+  
+  call_empirical_function <- function(df) summarise_(df, 
+                                                   .dots = setNames(empirical_dots, 
+                                                                    "summary"))
+  
+  booted_data <- multi_boot(data, summary_function = call_empirical_function, 
+                            column, statistics_functions = statistics_functions, 
+                            nboot = nboot)
+  
+  left_join(call_empirical_function(data),booted_data) %>%
+    rename_(.dots = setNames("summary",empirical_function))
+}
+
 #' Non-parametric bootstrap with multiple sample statistics
 #' 
 #' \code{multi_boot} is a generic function for bootstrapping on various data
