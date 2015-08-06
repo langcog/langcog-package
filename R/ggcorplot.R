@@ -1,7 +1,7 @@
 #' Using ggplot2 to plot matrix of correlations
 #' 
 #' Lightly modified from a post by Mike Lawrence at:
-#' https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ}
+#' https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ
 #' 
 #' \code{ggcorplot} takes a data frame or matrix, strips numeric variables, and 
 #' makes a "splom" style correlation plot, with significance values. Useful for 
@@ -9,19 +9,17 @@
 #' 
 #' @param data Data frame or matrix to be plotted.
 #' @param var_text_size Variable text size.
-#' @param cor_text_limits Size range for correlation text sizes
 #' 
 #' @keywords plotting
 #' @export
 #' @examples
 #' ## using iris data
-#' ggcorplot(iris[,1:4])
+#' ggcorplot(iris)
 #' 
 #' @seealso \code{\link[ggplot2]{qplot}}
 
 ggcorplot <- function(data, 
-                      var_text_size = 5, 
-                      cor_text_limits = c(6,30)) {
+                      var_text_size = 5) {
   
   # munge data ----------------------------
   
@@ -112,16 +110,16 @@ ggcorplot <- function(data,
                                     mapping = ggplot2::aes(x = x, y = y))
   
   cor_text <- ggplot2::layer(geom = 'text', data = z_cor, 
-                             mapping = aes(x = y_mid, 
+                             mapping = ggplot2::aes(x = y_mid, 
                                            y = x_mid, 
                                            label = cor,
-                                           size = cor_text_limits[1]  + rsq * cor_text_limits[2], 
+                                           size = rsq, 
                                            colour = p))
   
   var_text <- ggplot2::layer(geom = 'text',
                              geom_params = list(size=var_text_size), 
                              data = diag, 
-                             mapping = aes(x=y_mid, y=x_mid, label=x_lab))
+                             mapping = ggplot2::aes(x=y_mid, y=x_mid, label=x_lab))
   
   ggplot2::ggplot() + 
     points_layer +
