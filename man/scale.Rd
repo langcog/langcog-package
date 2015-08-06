@@ -6,6 +6,13 @@
 \usage{
 scale(x, center = TRUE, scale = TRUE)
 }
+\arguments{
+\item{x}{the data}
+
+\item{center}{whether you subtract the mean}
+
+\item{scale}{whether you divide by the SD}
+}
 \description{
 From \link[here]{http://r.789695.n4.nabble.com/How-to-remove-attributes-from-scale-in-a-matrix-td4671715.html}
 }

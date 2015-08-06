@@ -6,6 +6,10 @@
 #' that make \code{\link[base]{scale}} so terrible to work with in functional 
 #' environments.
 #' 
+#' @param x the data
+#' @param center whether you subtract the mean
+#' @param scale whether you divide by the SD
+#' 
 #' @keywords statistics
 #' @export
 #' @examples
