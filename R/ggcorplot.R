@@ -1,6 +1,7 @@
 #' Using ggplot2 to plot matrix of correlations
 #' 
-#' Lightly modified from a post by \link[Mike Lawrence]{https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ}
+#' Lightly modified from a post by Mike Lawrence at:
+#' https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ}
 #' 
 #' \code{ggcorplot} takes a data frame or matrix, strips numeric variables, and 
 #' makes a "splom" style correlation plot, with significance values. Useful for 
@@ -94,21 +95,21 @@ ggcorplot <- function(data,
   # used to be jitter, but this obscures data structure if used naively
   points_layer <- ggplot2::layer(geom = 'point', 
                                  data = z, 
-                                 mapping = aes(x = x, y = y))
+                                 mapping = ggplot2::aes(x = x, y = y))
   
   lm_line_layer <- ggplot2::layer(geom = 'line', 
                                   geom_params = list(colour = 'red'), 
                                   stat = 'smooth', 
                                   stat_params = list(method = 'lm'), 
                                   data = z, 
-                                  mapping = aes(x = x, y = y))
+                                  mapping = ggplot2::aes(x = x, y = y))
   
   lm_ribbon_layer <- ggplot2::layer(geom = 'ribbon',
                                     geom_params = list(fill = 'green', alpha = .5),
                                     stat = 'smooth',
                                     stat_params = list(method = 'lm'),
                                     data = z,
-                                    mapping = aes(x = x, y = y))
+                                    mapping = ggplot2::aes(x = x, y = y))
   
   cor_text <- ggplot2::layer(geom = 'text', data = z_cor, 
                              mapping = aes(x = y_mid, 
@@ -126,14 +127,14 @@ ggcorplot <- function(data,
     points_layer +
     lm_ribbon_layer + lm_line_layer +
     var_text + cor_text +
-    ggplot2::facet_grid(y_lab~x_lab,scales='free') +
-    ggplot2::theme(panel.grid.minor = element_blank(),
-                   panel.grid.major = element_blank(),
-                   axis.ticks = element_blank(),
-                   axis.text.y = element_blank(),
-                   axis.text.x = element_blank(),
-                   axis.title.y = element_blank(),
-                   axis.title.x = element_blank(),
+    ggplot2::facet_grid(y_lab~x_lab, scales='free') +
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                   panel.grid.major = ggplot2::element_blank(),
+                   axis.ticks = ggplot2::element_blank(),
+                   axis.text.y = ggplot2::element_blank(),
+                   axis.text.x = ggplot2::element_blank(),
+                   axis.title.y = ggplot2::element_blank(),
+                   axis.title.x = ggplot2::element_blank(),
                    legend.position='none') + 
     ggplot2::scale_size(limits = c(0,1))
 }
