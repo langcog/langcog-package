@@ -110,16 +110,16 @@ ggcorplot <- function(data,
                                     mapping = ggplot2::aes(x = x, y = y))
   
   cor_text <- ggplot2::layer(geom = 'text', data = z_cor, 
-                             mapping = ggplot2::aes(x = y_mid, 
-                                           y = x_mid, 
-                                           label = cor,
-                                           size = rsq, 
-                                           colour = p))
+                             mapping = ggplot2::aes_string(x = "y_mid", 
+                                           y = "x_mid", 
+                                           label = "cor",
+                                           size = "rsq", 
+                                           colour = "p"))
   
   var_text <- ggplot2::layer(geom = 'text',
                              geom_params = list(size=var_text_size), 
                              data = diag, 
-                             mapping = ggplot2::aes(x=y_mid, y=x_mid, label=x_lab))
+                             mapping = ggplot2::aes_string(x="y_mid", y="x_mid", label="x_lab"))
   
   ggplot2::ggplot() + 
     points_layer +
