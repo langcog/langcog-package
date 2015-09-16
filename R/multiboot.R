@@ -11,7 +11,7 @@
 #' @param nboot The number of bootstrap samples to take (defaults to \code{1000}).
 #' @param replace Logical indicating whether to sample with replacement (defaults to \code{TRUE}).
 #' @param ... Other arguments passed from generic.
-#'
+#' 
 #' @examples
 #' ## Mean and 95% confidence interval for 1000 samples from a normal distribution
 #' x <- rnorm(1000, mean = 0, sd = 1)
@@ -19,25 +19,29 @@
 #' ci_upper <- function(x) {quantile(x, 0.975)}
 #' multi_boot(x, statistics_functions = c("ci_lower", "mean", "ci_upper"))
 ## S3 method for class 'numeric'
-multi_boot.numeric <- function(data, summary_function = "mean", statistics_functions,
-                               nboot = 1000, replace = TRUE, ...) {
-  
-  formulas <- sapply(statistics_functions, function(x) lazyeval::interp(~fun, fun = x))
-  
+multi_boot.numeric <- function(data,
+                               summary_function = "mean",
+                               statistics_functions,
+                               nboot = 1000,
+                               replace = TRUE, ...) {
+
+  formulas <- sapply(statistics_functions,
+                     function(x) lazyeval::interp(~fun, fun = x))
+
   one_sample <- function() {
     do.call(summary_function, list(sample(data, replace = replace)))
   }
-  
+
   all_samples <- data.frame(sample = replicate(nboot, one_sample())) %>%
     summarise_each(funs_(formulas), sample)
-  
-  if(length(statistics_functions) == 1) {
+
+  if (length(statistics_functions) == 1) {
     all_samples <- all_samples %>%
       rename_(.dots = setNames("sample", statistics_functions))
   }
-  
+
   return(all_samples)
-  
+
 }
 
 #' Non-parametric bootstrap for logical vector data
@@ -54,10 +58,13 @@ multi_boot.numeric <- function(data, summary_function = "mean", statistics_funct
 #' ci_upper <- function(x) {quantile(x, 0.975)}
 #' multi_boot(x, statistics_functions = c("ci_lower", "mean", "ci_upper"))
 ## S3 method for class 'logical'
-multi_boot.logical <- function(data, summary_function = "mean", statistics_functions,
-                               nboot = 1000, replace = TRUE, ...) {
-  multi_boot(as.numeric(data), summary_function = "mean", statistics_functions,
-             nboot = 1000, replace = TRUE, ...)
+multi_boot.logical <- function(data,
+                               summary_function = "mean",
+                               statistics_functions,
+                               nboot = 1000,
+                               replace = TRUE, ...) {
+  multi_boot(as.numeric(data), summary_function, statistics_functions,
+             nboot, replace, ...)
 }
 
 #' Non-parametric bootstrap for data frames
@@ -100,34 +107,42 @@ multi_boot.logical <- function(data, summary_function = "mean", statistics_funct
 #'            statistics_groups = c("condition"),
 #'            nboot = 100, replace = TRUE)
 ## S3 method for class 'data.frame'
-multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL, summary_groups = NULL,
-                                  statistics_functions, statistics_groups = summary_groups, 
-                                  nboot = 1000, replace = TRUE, ...) {
-  
-  assertthat::assert_that(typeof(summary_function) %in% c("closure", "character"))
-  assertthat::assert_that(typeof(statistics_functions) %in% c("closure", "character"))
+multi_boot.data.frame <- function(data,
+                                  summary_function = "mean",
+                                  column = NULL,
+                                  summary_groups = NULL,
+                                  statistics_functions,
+                                  statistics_groups = summary_groups,
+                                  nboot = 1000,
+                                  replace = TRUE, ...) {
+
+  fun_types <- c("closure", "character")
+  assertthat::assert_that(typeof(summary_function) %in% fun_types)
+  assertthat::assert_that(typeof(statistics_functions) %in% fun_types)
   assertthat::assert_that(all(statistics_groups %in% summary_groups))
-  
+
   original_groups <- groups(data)
 
-  if(typeof(summary_function) == "closure") { # function
+  if (typeof(summary_function) == "closure") {
     call_summary_function <- summary_function
-  } else { # string
+  } else {
     assertthat::assert_that(!is.null(column))
-    summary_dots <- list(lazyeval::interp(~fun(arg), 
-                                          fun = as.name(summary_function), 
+    summary_dots <- list(lazyeval::interp(~fun(arg),
+                                          fun = as.name(summary_function),
                                           arg = as.name(column)))
-    call_summary_function <- function(df) summarise_(df, 
-                                                     .dots = setNames(summary_dots, "summary"))
+    call_summary_function <- function(df) {
+      summarise_(df, .dots = setNames(summary_dots, "summary"))
+    }
   }
-  
-  if(typeof(statistics_functions) == "closure") { # function
+
+  if (typeof(statistics_functions) == "closure") {
     call_statistics_functions <- statistics_functions
-  } else { # string
-    statistics_formulas <- sapply(statistics_functions, 
+  } else {
+    statistics_formulas <- sapply(statistics_functions,
                                   function(x) lazyeval::interp(~fun, fun = x))
-    call_statistics_functions <- function(df) summarise_each(df, 
-                                                             funs_(statistics_formulas), summary)
+    call_statistics_functions <- function(df) {
+      summarise_each(df, funs_(statistics_formulas), summary)
+    }
   }
 
   one_sample <- function(df, call_summary_function, summary_groups, replace) {
@@ -142,27 +157,30 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
         mutate(sample = k)
     }
   }
-  
-  all_samples <- sapply(1:nboot, one_sample(data, call_summary_function, 
-                                            summary_groups, replace),
-                        simplify=FALSE) %>%
-    bind_rows
-  
-  if(is.null(summary_groups) & !is.null(original_groups)) 
-    all_samples <- group_by_(all_samples,.dots = original_groups) 
-  
-  if (!is.null(statistics_groups)) {
-    all_samples <- all_samples %>% group_by_(.dots = statistics_groups)
-  }
-  
-  booted_vals <- all_samples %>% call_statistics_functions()
 
-  if(typeof(statistics_functions) == "character" & length(statistics_functions) == 1) {
-    booted_vals <- booted_vals %>% rename_(.dots = setNames("summary", statistics_functions))
+  all_samples <- sapply(1:nboot, one_sample(data, call_summary_function,
+                                            summary_groups, replace),
+                        simplify = FALSE) %>%
+    bind_rows()
+
+  if (is.null(summary_groups) & !is.null(original_groups))
+    all_samples <- group_by_(all_samples,.dots = original_groups)
+
+  if (!is.null(statistics_groups)) {
+    all_samples <- group_by_(all_samples, .dots = statistics_groups)
   }
-  
+
+  booted_vals <- call_statistics_functions(all_samples)
+
+  if (typeof(statistics_functions) == "character" &
+       length(statistics_functions) == 1) {
+    booted_vals <- rename_(booted_vals, .dots = setNames("summary",
+                                                         statistics_functions))
+  }
+
   return(booted_vals)
 }
+
 
 #' Nonparemetric Bootstrap and Empirical central tendency for data frames
 #' Designed to make standard use of \code{multi_boot.data.frame} easier
@@ -174,7 +192,7 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
 #' @param data A data frame.
 #' @param column A string indicating the column of \code{data} to bootstrap 
 #' @param na.rm A logical indicating whether NAs should be dropped before 
-#'  bootstrapping (defaults to \code{FALSE})
+#'  bootstrapping (defaults to \code{NULL})
 #' @param empirical_function a string indicating the function to compute and 
 #'  bootstrap over (defaults to \code{mean})
 #' @param statistics_functions A vector of strings that are names of functions
@@ -191,16 +209,17 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
 #' df <- bind_rows(gauss1, gauss2) %>%
 #'  group_by(condition)
 #' multi_boot_standard(data = df, column = "value")
-multi_boot_standard <- function(data, column, na.rm = NULL, 
-                                empirical_function = "mean", 
-                                statistics_functions = c("ci_lower", "ci_upper"), 
+multi_boot_standard <- function(data, column, na.rm = NULL,
+                                empirical_function = "mean",
+                                statistics_functions = c("ci_lower",
+                                                         "ci_upper"),
                                 nboot = 1000) {
-  
+
   assertthat::assert_that(typeof(empirical_function) == "character")
   
   if (!is.null(na.rm)) {
     empirical_dots <- list(lazyeval::interp(~fun(arg, na.rm = na.rm), 
-                                        fun = as.name(empirical_function), 
+                                        fun = as.name(empirical_function),
                                         arg = as.name(column)))
     
     statistics_funs <- sapply(statistics_functions, 
@@ -213,22 +232,22 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
     
     
   } else {
-    empirical_dots <- list(lazyeval::interp(~fun(arg), 
-                                            fun = as.name(empirical_function), 
+    empirical_dots <- list(lazyeval::interp(~fun(arg),
+                                            fun = as.name(empirical_function),
                                             arg = as.name(column)))
     
     statistics_formulas <- statistics_functions
-  }
+    }
   
-  call_empirical_function <- function(df) summarise_(df, 
-                                                   .dots = setNames(empirical_dots, 
-                                                                    "summary"))
+  call_empirical_function <- function(df) {
+    summarise_(df, .dots = setNames(empirical_dots, "summary")) 
+    }
   
   booted_data <- multi_boot(data, summary_function = call_empirical_function, 
                             column, statistics_functions = statistics_formulas, 
                             nboot = nboot)
-  
-  left_join(call_empirical_function(data),booted_data) %>%
+
+  left_join(call_empirical_function(data), booted_data) %>%
     rename_(.dots = setNames("summary",empirical_function))
 }
 

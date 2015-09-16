@@ -14,7 +14,7 @@ multi_boot_standard(data, column, na.rm = NULL, empirical_function = "mean",
 \item{column}{A string indicating the column of \code{data} to bootstrap}
 
 \item{na.rm}{A logical indicating whether NAs should be dropped before
-bootstrapping (defaults to \code{FALSE})}
+bootstrapping (defaults to \code{NULL})}
 
 \item{empirical_function}{a string indicating the function to compute and
 bootstrap over (defaults to \code{mean})}
