@@ -191,21 +191,33 @@ multi_boot.data.frame <- function(data, summary_function = "mean", column = NULL
 #' df <- bind_rows(gauss1, gauss2) %>%
 #'  group_by(condition)
 #' multi_boot_standard(data = df, column = "value")
-multi_boot_standard <- function(data, column, na.rm = FALSE, 
+multi_boot_standard <- function(data, column, na.rm = NULL, 
                                 empirical_function = "mean", 
                                 statistics_functions = c("ci_lower", "ci_upper"), 
                                 nboot = 1000) {
   
   assertthat::assert_that(typeof(empirical_function) == "character")
   
-  if(na.rm) {
+  if (!is.null(na.rm)) {
     empirical_dots <- list(lazyeval::interp(~fun(arg, na.rm = na.rm), 
                                         fun = as.name(empirical_function), 
                                         arg = as.name(column)))
+    
+    statistics_funs <- sapply(statistics_functions, 
+                              function(x) lazyeval::
+                                interp(~fun(., na.rm = na.rm), fun = as.name(x)))
+    
+    statistics_formulas = function(df) summarise_each(df,
+                                                       funs_(statistics_funs),
+                                                       summary)
+    
+    
   } else {
     empirical_dots <- list(lazyeval::interp(~fun(arg), 
                                             fun = as.name(empirical_function), 
                                             arg = as.name(column)))
+    
+    statistics_formulas <- statistics_functions
   }
   
   call_empirical_function <- function(df) summarise_(df, 
@@ -213,7 +225,7 @@ multi_boot_standard <- function(data, column, na.rm = FALSE,
                                                                     "summary"))
   
   booted_data <- multi_boot(data, summary_function = call_empirical_function, 
-                            column, statistics_functions = statistics_functions, 
+                            column, statistics_functions = statistics_formulas, 
                             nboot = nboot)
   
   left_join(call_empirical_function(data),booted_data) %>%

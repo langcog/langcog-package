@@ -4,10 +4,12 @@
 \alias{ci_upper}
 \title{Confidence interval (upper)}
 \usage{
-ci_upper(x)
+ci_upper(x, na.rm = FALSE)
 }
 \arguments{
 \item{x}{Numeric vector whose confidence interval is wanted.}
+
+\item{na.rm}{Logical indicating whether NAs should be removed}
 }
 \description{
 Gives the upper bound of the 95\% confidence interval of an empirical

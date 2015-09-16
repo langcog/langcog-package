@@ -24,12 +24,13 @@ sem <- function(x, na.rm = FALSE) {
 #' distribution.
 #' 
 #' @param x Numeric vector whose confidence interval is wanted.
+#' @param na.rm Logical indicating whether NAs should be removed
 #'   
 #' @examples
 #' x <- rnorm(1000)
 #' ci_lower(x)
-ci_lower <- function(x) {
-  quantile(x, 0.025)
+ci_lower <- function(x, na.rm = FALSE) {
+  quantile(x, 0.025, na.rm)
 }
 
 #' Confidence interval (upper)
@@ -38,12 +39,13 @@ ci_lower <- function(x) {
 #' distribution.
 #' 
 #' @param x Numeric vector whose confidence interval is wanted.
+#' @param na.rm Logical indicating whether NAs should be removed
 #'   
 #' @examples
 #' x <- rnorm(1000)
 #' ci_upper(x)
-ci_upper <- function(x) {
-  quantile(x, 0.975)
+ci_upper <- function(x, na.rm = FALSE) {
+  quantile(x, 0.975, na.rm)
 }
 
 #' Significance stars
