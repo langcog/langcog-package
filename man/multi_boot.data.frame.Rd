@@ -6,7 +6,8 @@
 \usage{
 \method{multi_boot}{data.frame}(data, summary_function = "mean",
   column = NULL, summary_groups = NULL, statistics_functions,
-  statistics_groups = summary_groups, nboot = 1000, replace = TRUE, ...)
+  statistics_groups = summary_groups, nboot = 1000, size = 1,
+  replace = TRUE, ...)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -29,6 +30,8 @@ summary values from all samples.}
 be grouped before applying \code{statistics_functions} (defaults to \code{summary_groups}).}
 
 \item{nboot}{The number of bootstrap samples to take (defaults to \code{1000}).}
+
+\item{size}{The fraction of rows to sample (defaults to 1).}
 
 \item{replace}{Logical indicating whether to sample with replacement (defaults to \code{TRUE}).}
 

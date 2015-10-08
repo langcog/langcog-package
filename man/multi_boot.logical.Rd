@@ -5,7 +5,7 @@
 \title{Non-parametric bootstrap for logical vector data}
 \usage{
 \method{multi_boot}{logical}(data, summary_function = "mean",
-  statistics_functions, nboot = 1000, replace = TRUE, ...)
+  statistics_functions, nboot = 1000, size = 1, replace = TRUE, ...)
 }
 \arguments{
 \item{data}{A logical vector of data to bootstrap over.}
@@ -18,6 +18,8 @@ return a single number (defaults to \code{"mean"}).}
 computed over the set of summary values from all samples.}
 
 \item{nboot}{The number of bootstrap samples to take (defaults to \code{1000}).}
+
+\item{size}{The fraction of items to sample (defaults to 1).}
 
 \item{replace}{Logical indicating whether to sample with replacement (defaults to \code{TRUE}).}
 
