@@ -4,10 +4,12 @@
 \alias{ci_lower}
 \title{Confidence interval (lower)}
 \usage{
-ci_lower(x)
+ci_lower(x, na.rm = FALSE)
 }
 \arguments{
 \item{x}{Numeric vector whose confidence interval is wanted.}
+
+\item{na.rm}{Logical indicating whether NAs should be removed}
 }
 \description{
 Gives the lower bound of the 95\% confidence interval of an empirical

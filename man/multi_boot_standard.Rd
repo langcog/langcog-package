@@ -5,9 +5,8 @@
 \title{Nonparemetric Bootstrap and Empirical central tendency for data frames
 Designed to make standard use of \code{multi_boot.data.frame} easier}
 \usage{
-multi_boot_standard(data, column, na.rm = FALSE,
-  empirical_function = "mean", statistics_functions = c("ci_lower",
-  "ci_upper"), nboot = 1000)
+multi_boot_standard(data, column, na.rm = NULL, empirical_function = "mean",
+  statistics_functions = c("ci_lower", "ci_upper"), nboot = 1000)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -15,7 +14,7 @@ multi_boot_standard(data, column, na.rm = FALSE,
 \item{column}{A string indicating the column of \code{data} to bootstrap}
 
 \item{na.rm}{A logical indicating whether NAs should be dropped before
-bootstrapping (defaults to \code{FALSE})}
+bootstrapping (defaults to \code{NULL})}
 
 \item{empirical_function}{a string indicating the function to compute and
 bootstrap over (defaults to \code{mean})}
