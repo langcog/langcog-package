@@ -1,15 +1,16 @@
 #' Using ggplot2 to plot matrix of correlations
 #' 
-#' Lightly modified from a post by Mike Lawrence at:
-#' https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ
+#' Lightly modified from
+#' \href{https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ}{a
+#' post by Mike Lawrence}.
 #' 
 #' \code{ggcorplot} takes a data frame or matrix, strips numeric variables, and 
 #' makes a "splom" style correlation plot, with significance values. Useful for 
-#' exploratory data analysis. 
+#' exploratory data analysis.
 #' 
 #' @param data Data frame or matrix to be plotted.
 #' @param var_text_size Variable text size.
-#' 
+#'   
 #' @keywords plotting
 #' @export
 #' @examples
@@ -17,19 +18,18 @@
 #' ggcorplot(iris)
 #' 
 #' @seealso \code{\link[ggplot2]{qplot}}
-
 ggcorplot <- function(data,
                       var_text_size = 5) {
-
+  
   # munge data ----------------------------
-
+  
   # drop non-numeric columns
   nums <- sapply(data, is.numeric)
   data <- data[,nums]
-
+  
   # reshape
   data <- as.data.frame(scale(data)) # scale
-
+  
   # obtain new data frame
   # this should be easy to make functional (but I haven't figured it out)
   z <- data.frame()
@@ -48,12 +48,12 @@ ggcorplot <- function(data,
       j <- j + 1
     }
   }
-
+  
   names(z) <- c("x", "y", "x_lab", "y_lab")
   z$x_lab <- ezLev(factor(z$x_lab), names(data))
   z$y_lab <- ezLev(factor(z$y_lab), names(data))
   z <- z[z$x_lab != z$y_lab,]
-
+  
   # obtain correlation values
   z_cor <- data.frame()
   i <- 1
@@ -78,7 +78,7 @@ ggcorplot <- function(data,
                          paste("-", substr(format(c(this_cor, .123456789),
                                                   digits = 2)[1], 3, 5),
                                sep = "")
-                         )
+      )
       b <- as.data.frame(cor_text)
       b <- cbind(b, x_mid, y_mid, this_col, this_size, names(data)[j],
                  names(data)[i])
@@ -91,20 +91,20 @@ ggcorplot <- function(data,
   z_cor$y_lab <- ezLev(factor(z_cor$y_lab), names(data))
   diag <- z_cor[z_cor$x_lab == z_cor$y_lab,]
   z_cor <- z_cor[z_cor$x_lab != z_cor$y_lab,]
-
+  
   # ggplot 2 layers ----------------------------
   # used to be jitter, but this obscures data structure if used naively
   points_layer <- ggplot2::layer(geom = "point",
                                  data = z,
                                  mapping = ggplot2::aes(x = x, y = y))
-
+  
   lm_line_layer <- ggplot2::layer(geom = "line",
                                   geom_params = list(colour = "red"),
                                   stat = "smooth",
                                   stat_params = list(method = "lm"),
                                   data = z,
                                   mapping = ggplot2::aes(x = x, y = y))
-
+  
   lm_ribbon_layer <- ggplot2::layer(geom = "ribbon",
                                     geom_params = list(fill = "green",
                                                        alpha = .5),
@@ -112,21 +112,21 @@ ggcorplot <- function(data,
                                     stat_params = list(method = "lm"),
                                     data = z,
                                     mapping = ggplot2::aes(x = x, y = y))
-
+  
   cor_text <- ggplot2::layer(geom = "text", data = z_cor,
                              mapping = ggplot2::aes_string(x = "y_mid",
                                                            y = "x_mid",
                                                            label = "cor",
                                                            size = "rsq",
                                                            colour = "p"))
-
+  
   var_text <- ggplot2::layer(geom = "text",
                              geom_params = list(size = var_text_size),
                              data = diag,
                              mapping = ggplot2::aes_string(x = "y_mid",
                                                            y = "x_mid",
                                                            label = "x_lab"))
-
+  
   ggplot2::ggplot() +
     points_layer +
     lm_ribbon_layer + lm_line_layer +
@@ -143,7 +143,6 @@ ggcorplot <- function(data,
     ggplot2::scale_size(limits = c(0, 1))
 }
 
-
 #' Helper function for levels, from the ez package
 #' 
 #' @param x factor
@@ -154,7 +153,6 @@ ggcorplot <- function(data,
 #' @examples
 #' x <- factor(c("A", "B", "C"))
 #' ezLev(x, c(3,1,2))
-
 ezLev <- function(x, new_order){
   for (i in rev(new_order)) {
     x <- relevel(x, ref = i)

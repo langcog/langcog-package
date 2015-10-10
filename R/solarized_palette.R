@@ -12,7 +12,7 @@
 #'   show_col(solarized_palette(9))
 #' }
 solarized_palette <- function(num_values) {
-
+  
   solarized_colors <- c(magenta = "#d33682",
                         red = "#dc322f",
                         orange = "#cb4b16",
@@ -22,10 +22,10 @@ solarized_palette <- function(num_values) {
                         blue = "#268bd2",
                         violet = "#6c71c4",
                         purple = "#993399")
-
+  
   color_order <- c("blue", "orange", "green", "purple", "magenta",
                    "yellow", "cyan", "violet", "red")
-
+  
   num_colors <- length(color_order)
   num_color_values <- num_values %% num_colors
   palette <- c(rep(solarized_colors, num_values %/% num_colors),
@@ -35,7 +35,7 @@ solarized_palette <- function(num_values) {
                )])
   names(palette) <- NULL
   return(palette)
-
+  
 }
 
 
@@ -69,7 +69,7 @@ scale_fill_solarized <- function(...) {
 
 #' ggplot2 theme
 #' 
-#' Has the same theme options as \code{\link{theme_bw}}, except for different
+#' Has the same theme options as \code{\link[ggplot2]{theme_bw}}, except for different
 #' defaults for \code{base_size} and \code{base_family}, and no minor gridlines.
 #' 
 #' @param base_size base font size
@@ -83,6 +83,8 @@ scale_fill_solarized <- function(...) {
 #'   theme_mikabr()
 #'   }
 theme_mikabr <- function(base_size = 14, base_family = "Open Sans") {
-  ggplot2::`%+replace%`(ggplot2::theme_bw(base_size = base_size, base_family = base_family),
-    ggplot2::theme(panel.grid.minor = ggplot2::element_blank()))
+  ggplot2::`%+replace%`(
+    ggplot2::theme_bw(base_size = base_size, base_family = base_family),
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
+  )
 }

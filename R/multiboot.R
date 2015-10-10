@@ -26,25 +26,25 @@ multi_boot.numeric <- function(data,
                                nboot = 1000,
                                size = 1,
                                replace = TRUE, ...) {
-
+  
   formulas <- sapply(statistics_functions,
                      function(x) lazyeval::interp(~fun, fun = x))
-
+  
   one_sample <- function() {
     do.call(summary_function, list(sample(data, size = size * length(data),
                                           replace = replace)))
   }
-
+  
   all_samples <- data.frame(sample = replicate(nboot, one_sample())) %>%
     summarise_each(funs_(formulas), sample)
-
+  
   if (length(statistics_functions) == 1) {
     all_samples <- all_samples %>%
       rename_(.dots = setNames("sample", statistics_functions))
   }
-
+  
   return(all_samples)
-
+  
 }
 
 #' Non-parametric bootstrap for logical vector data
@@ -121,14 +121,14 @@ multi_boot.data.frame <- function(data,
                                   nboot = 1000,
                                   size = 1,
                                   replace = TRUE, ...) {
-
+  
   fun_types <- c("closure", "character")
   assertthat::assert_that(typeof(summary_function) %in% fun_types)
   assertthat::assert_that(typeof(statistics_functions) %in% fun_types)
   assertthat::assert_that(all(statistics_groups %in% summary_groups))
-
+  
   original_groups <- groups(data)
-
+  
   if (typeof(summary_function) == "closure") {
     call_summary_function <- summary_function
   } else {
@@ -140,7 +140,7 @@ multi_boot.data.frame <- function(data,
       summarise_(df, .dots = setNames(summary_dots, "summary"))
     }
   }
-
+  
   if (typeof(statistics_functions) == "closure") {
     call_statistics_functions <- statistics_functions
   } else {
@@ -150,7 +150,7 @@ multi_boot.data.frame <- function(data,
       summarise_each(df, funs_(statistics_formulas), summary)
     }
   }
-
+  
   one_sample <- function(df, call_summary_function, summary_groups, replace) {
     function(k) {
       if (!is.null(summary_groups)) {
@@ -163,27 +163,27 @@ multi_boot.data.frame <- function(data,
         mutate(sample = k)
     }
   }
-
+  
   all_samples <- sapply(1:nboot, one_sample(data, call_summary_function,
                                             summary_groups, replace),
                         simplify = FALSE) %>%
     bind_rows()
-
+  
   if (is.null(summary_groups) & !is.null(original_groups))
     all_samples <- group_by_(all_samples,.dots = original_groups)
-
+  
   if (!is.null(statistics_groups)) {
     all_samples <- group_by_(all_samples, .dots = statistics_groups)
   }
-
+  
   booted_vals <- call_statistics_functions(all_samples)
-
+  
   if (typeof(statistics_functions) == "character" &
-       length(statistics_functions) == 1) {
+      length(statistics_functions) == 1) {
     booted_vals <- rename_(booted_vals, .dots = setNames("summary",
                                                          statistics_functions))
   }
-
+  
   return(booted_vals)
 }
 
@@ -220,21 +220,21 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
                                 statistics_functions = c("ci_lower",
                                                          "ci_upper"),
                                 nboot = 1000) {
-
+  
   assertthat::assert_that(typeof(empirical_function) == "character")
   
   if (!is.null(na.rm)) {
     empirical_dots <- list(lazyeval::interp(~fun(arg, na.rm = na.rm), 
-                                        fun = as.name(empirical_function),
-                                        arg = as.name(column)))
+                                            fun = as.name(empirical_function),
+                                            arg = as.name(column)))
     
-    statistics_funs <- sapply(statistics_functions, 
-                              function(x) lazyeval::
-                                interp(~fun(., na.rm = na.rm), fun = as.name(x)))
+    statistics_funs <- sapply(
+      statistics_functions,
+      function(x) lazyeval::interp(~fun(., na.rm = na.rm), fun = as.name(x))
+    )
     
-    statistics_formulas = function(df) summarise_each(df,
-                                                       funs_(statistics_funs),
-                                                       summary)
+    statistics_formulas <- function(df)
+      summarise_each(df, funs_(statistics_funs), summary)
     
     
   } else {
@@ -243,16 +243,16 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
                                             arg = as.name(column)))
     
     statistics_formulas <- statistics_functions
-    }
+  }
   
   call_empirical_function <- function(df) {
     summarise_(df, .dots = setNames(empirical_dots, "summary")) 
-    }
+  }
   
   booted_data <- multi_boot(data, summary_function = call_empirical_function, 
                             column, statistics_functions = statistics_formulas, 
                             nboot = nboot)
-
+  
   left_join(call_empirical_function(data), booted_data) %>%
     rename_(.dots = setNames("summary",empirical_function))
 }

@@ -12,8 +12,9 @@ ggcorplot(data, var_text_size = 5)
 \item{var_text_size}{Variable text size.}
 }
 \description{
-Lightly modified from a post by Mike Lawrence at:
-https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ
+Lightly modified from
+\href{https://groups.google.com/forum/#!searchin/ggplot2/ggcorplot/ggplot2/odaZVAyKvE4/lsFIE86pUVoJ}{a
+post by Mike Lawrence}.
 }
 \details{
 \code{ggcorplot} takes a data frame or matrix, strips numeric variables, and

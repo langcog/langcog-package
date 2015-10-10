@@ -12,7 +12,7 @@ theme_mikabr(base_size = 14, base_family = "Open Sans")
 \item{base_family}{base font family}
 }
 \description{
-Has the same theme options as \code{\link{theme_bw}}, except for different
+Has the same theme options as \code{\link[ggplot2]{theme_bw}}, except for different
 defaults for \code{base_size} and \code{base_family}, and no minor gridlines.
 }
 \examples{
