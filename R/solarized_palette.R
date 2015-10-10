@@ -1,11 +1,11 @@
 #' solarized colour palette
-#'  
-#' Provides a colour scheme based on the 
+#'
+#' Provides a colour scheme based on the
 #' \href{http://ethanschoonover.com/solarized}{solarized} accent colours.
-#' 
-#' @param num_values Number of values to colour. If more than 9, colours start 
+#'
+#' @param num_values Number of values to colour. If more than 9, colours start
 #'   to repeat.
-#'   
+#'
 #' @examples
 #' if (requireNamespace("scales", quietly = TRUE)) {
 #'   library(scales)
@@ -40,14 +40,14 @@ solarized_palette <- function(num_values) {
 
 
 #' solarized colour palette for ggplot2
-#' 
-#' Provides a colour scheme based on the 
+#'
+#' Provides a colour scheme based on the
 #' \href{http://ethanschoonover.com/solarized}{solarized} accent colours for use
 #' with ggplot2.
-#' 
-#' @param ... Arguments passed on to discrete_scale to control name, limits, 
+#'
+#' @param ... Arguments passed on to discrete_scale to control name, limits,
 #'   breaks, labels and so forth.
-#'   
+#'
 #' @examples
 #' library(ggplot2)
 #' ggplot(mtcars, aes(x = mpg, y = hp, colour = factor(cyl))) +
@@ -65,4 +65,24 @@ scale_color_solarized <- function(...) {
 #' @rdname scale_colour_solarized
 scale_fill_solarized <- function(...) {
   ggplot2::discrete_scale("fill", "solarized", solarized_palette, ...)
+}
+
+#' ggplot2 theme
+#' 
+#' Has the same theme options as \code{\link{theme_bw}}, except for different
+#' defaults for \code{base_size} and \code{base_family}, and no minor gridlines.
+#' 
+#' @param base_size base font size
+#' @param base_family base font family
+#'   
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#' ggplot(mtcars, aes(x = mpg, y = hp, colour = factor(cyl))) +
+#'   geom_point() +
+#'   theme_mikabr()
+#'   }
+theme_mikabr <- function(base_size = 14, base_family = "Open Sans") {
+  ggplot2::`%+replace%`(ggplot2::theme_bw(base_size = base_size, base_family = base_family),
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank()))
 }
