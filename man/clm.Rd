@@ -4,7 +4,7 @@
 \alias{clm}
 \title{Fitting linear models under constraints}
 \usage{
-clm(formula, data)
+clm(formula, data, ...)
 }
 \arguments{
 \item{formula}{An object of class "\code{\link[stats]{formula}}" (or one that
@@ -12,8 +12,10 @@ can be coerced to that class): a symbolic description of the model to be
 fitted.}
 
 \item{data}{A data frame (or object coercible by
-  \code{\link[base]{as.data.frame}} to a data frame) containing the variables
-  in the model.}
+\code{\link[base]{as.data.frame}} to a data frame) containing the variables
+in the model.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 \code{clm} returns an object of \code{\link[base]{class}}
