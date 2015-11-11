@@ -11,6 +11,7 @@
 #'   library(scales)
 #'   show_col(solarized_palette(9))
 #' }
+#' @export
 solarized_palette <- function(num_values) {
   
   solarized_colors <- c(magenta = "#d33682",
@@ -53,6 +54,7 @@ solarized_palette <- function(num_values) {
 #' ggplot(mtcars, aes(x = mpg, y = hp, colour = factor(cyl))) +
 #'   geom_point() +
 #'   scale_colour_solarized()
+#' @export
 scale_colour_solarized <- function(...) {
   ggplot2::discrete_scale("colour", "solarized", solarized_palette, ...)
 }
@@ -82,6 +84,7 @@ scale_fill_solarized <- function(...) {
 #'   geom_point() +
 #'   theme_mikabr()
 #'   }
+#' @export
 theme_mikabr <- function(base_size = 14, base_family = "Open Sans") {
   ggplot2::`%+replace%`(
     ggplot2::theme_bw(base_size = base_size, base_family = base_family),

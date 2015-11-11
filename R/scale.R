@@ -10,13 +10,13 @@
 #' @param center whether you subtract the mean
 #' @param scale whether you divide by the SD
 #' 
+#' @seealso \code{\link[base]{scale}}
 #' @keywords statistics
-#' @export
+#' 
 #' @examples
 #' scale(c(1,2,3,4,5))
 #' 
-#' @seealso \code{\link[base]{scale}}
-
+#' @export
 scale <- function(x, center = TRUE, scale = TRUE) {
   x <- as.matrix(x)
   nc <- ncol(x)

@@ -9,6 +9,7 @@
 #' @examples
 #' x <- rnorm(100)
 #' sem(x)
+#' @export
 sem <- function(x, na.rm = FALSE) {
   if (na.rm) {
     n <- sum(!is.na(x))
@@ -29,6 +30,7 @@ sem <- function(x, na.rm = FALSE) {
 #' @examples
 #' x <- rnorm(1000)
 #' ci_lower(x)
+#' @export
 ci_lower <- function(x, na.rm = FALSE) {
   quantile(x, 0.025, na.rm)
 }
@@ -44,6 +46,7 @@ ci_lower <- function(x, na.rm = FALSE) {
 #' @examples
 #' x <- rnorm(1000)
 #' ci_upper(x)
+#' @export
 ci_upper <- function(x, na.rm = FALSE) {
   quantile(x, 0.975, na.rm)
 }
@@ -59,6 +62,7 @@ ci_upper <- function(x, na.rm = FALSE) {
 #'   
 #' @examples
 #' get_stars(0.03)
+#' @export
 get_stars <- function(p) {
   if (p < 0.001) return("***")
   if (p < 0.01) return("**")

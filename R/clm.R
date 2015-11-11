@@ -34,6 +34,7 @@
 #' trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
 #' df <- data.frame(weight = c(ctl, trt), group = c(rep(0, 10), rep(1, 10)))
 #' lm.D9 <- clm(weight ~ group, df)
+#' @export
 clm <- function(formula, data, ...) {
   M <- stats::model.frame(stats::as.formula(formula), as.data.frame(data))
   y <- M[,1]
@@ -53,7 +54,7 @@ clm <- function(formula, data, ...) {
 #' @param newdata A data frame in which to look for variables with which to
 #'   predict.
 #' @param ... Further arguments passed to or from other methods.
-## S3 method for class 'clm'
+#' @export
 predict.clm <- function(object, newdata, ...) {
   M <- as.matrix(stats::model.frame(object$formula[-2], newdata))
   s <- object$solution
@@ -71,7 +72,7 @@ predict.clm <- function(object, newdata, ...) {
 #' @param xseq See \code{\link[ggplot2]{stat_smooth}}.
 #' @param se See \code{\link[ggplot2]{stat_smooth}}.
 #' @param level See \code{\link[ggplot2]{stat_smooth}}.
-## S3 predictdf method for 'clm'
+#' @export
 predictdf.clm <- function(model, xseq, se, level) {
   pred <- stats::predict(model, newdata = data.frame(x = xseq))
   data.frame(x = xseq, y = as.vector(pred))

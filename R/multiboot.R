@@ -1,3 +1,6 @@
+#' @importFrom dplyr "%>%"
+NULL
+
 #' Non-parametric bootstrap for numeric vector data
 #'
 #' Computes arbitrary bootstrap statistics on univariate data.
@@ -19,7 +22,7 @@
 #' ci_lower <- function(x) {quantile(x, 0.025)}
 #' ci_upper <- function(x) {quantile(x, 0.975)}
 #' multi_boot(x, statistics_functions = c("ci_lower", "mean", "ci_upper"))
-## S3 method for class 'numeric'
+#' @export
 multi_boot.numeric <- function(data,
                                summary_function = "mean",
                                statistics_functions,
@@ -36,11 +39,11 @@ multi_boot.numeric <- function(data,
   }
   
   all_samples <- data.frame(sample = replicate(nboot, one_sample())) %>%
-    summarise_each(funs_(formulas), sample)
+    dplyr::summarise_each(dplyr::funs_(formulas), sample)
   
   if (length(statistics_functions) == 1) {
     all_samples <- all_samples %>%
-      rename_(.dots = setNames("sample", statistics_functions))
+      dplyr::rename_(.dots = setNames("sample", statistics_functions))
   }
   
   return(all_samples)
@@ -60,7 +63,7 @@ multi_boot.numeric <- function(data,
 #' ci_lower <- function(x) {quantile(x, 0.025)}
 #' ci_upper <- function(x) {quantile(x, 0.975)}
 #' multi_boot(x, statistics_functions = c("ci_lower", "mean", "ci_upper"))
-## S3 method for class 'logical'
+#' @export
 multi_boot.logical <- function(data,
                                summary_function = "mean",
                                statistics_functions,
@@ -111,7 +114,7 @@ multi_boot.logical <- function(data,
 #'                                                               mean),
 #'            statistics_groups = c("condition"),
 #'            nboot = 100, replace = TRUE)
-## S3 method for class 'data.frame'
+#' @export
 multi_boot.data.frame <- function(data,
                                   summary_function = "mean",
                                   column = NULL,
@@ -127,7 +130,7 @@ multi_boot.data.frame <- function(data,
   assertthat::assert_that(typeof(statistics_functions) %in% fun_types)
   assertthat::assert_that(all(statistics_groups %in% summary_groups))
   
-  original_groups <- groups(data)
+  original_groups <- dplyr::groups(data)
   
   if (typeof(summary_function) == "closure") {
     call_summary_function <- summary_function
@@ -137,7 +140,7 @@ multi_boot.data.frame <- function(data,
                                           fun = as.name(summary_function),
                                           arg = as.name(column)))
     call_summary_function <- function(df) {
-      summarise_(df, .dots = setNames(summary_dots, "summary"))
+      dplyr::summarise_(df, .dots = setNames(summary_dots, "summary"))
     }
   }
   
@@ -147,7 +150,7 @@ multi_boot.data.frame <- function(data,
     statistics_formulas <- sapply(statistics_functions,
                                   function(x) lazyeval::interp(~fun, fun = x))
     call_statistics_functions <- function(df) {
-      summarise_each(df, funs_(statistics_formulas), summary)
+      dplyr::summarise_each(df, dplyr::funs_(statistics_formulas), summary)
     }
   }
   
@@ -155,33 +158,34 @@ multi_boot.data.frame <- function(data,
     function(k) {
       if (!is.null(summary_groups)) {
         df <- df %>%
-          group_by_(.dots = summary_groups)
+          dplyr::group_by_(.dots = summary_groups)
       }
       df %>%
-        sample_frac(size = size, replace = replace) %>%
+        dplyr::sample_frac(size = size, replace = replace) %>%
         call_summary_function() %>%
-        mutate(sample = k)
+        dplyr::mutate(sample = k)
     }
   }
   
   all_samples <- sapply(1:nboot, one_sample(data, call_summary_function,
                                             summary_groups, replace),
                         simplify = FALSE) %>%
-    bind_rows()
+    dplyr::bind_rows()
   
   if (is.null(summary_groups) & !is.null(original_groups))
-    all_samples <- group_by_(all_samples,.dots = original_groups)
+    all_samples <- dplyr::group_by_(all_samples,.dots = original_groups)
   
   if (!is.null(statistics_groups)) {
-    all_samples <- group_by_(all_samples, .dots = statistics_groups)
+    all_samples <- dplyr::group_by_(all_samples, .dots = statistics_groups)
   }
   
   booted_vals <- call_statistics_functions(all_samples)
   
   if (typeof(statistics_functions) == "character" &
       length(statistics_functions) == 1) {
-    booted_vals <- rename_(booted_vals, .dots = setNames("summary",
-                                                         statistics_functions))
+    booted_vals <- dplyr::rename_(booted_vals,
+                                  .dots = setNames("summary",
+                                                   statistics_functions))
   }
   
   return(booted_vals)
@@ -215,6 +219,7 @@ multi_boot.data.frame <- function(data,
 #' df <- bind_rows(gauss1, gauss2) %>%
 #'  group_by(condition)
 #' multi_boot_standard(data = df, column = "value")
+#' @export
 multi_boot_standard <- function(data, column, na.rm = NULL,
                                 empirical_function = "mean",
                                 statistics_functions = c("ci_lower",
@@ -234,7 +239,7 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
     )
     
     statistics_formulas <- function(df)
-      summarise_each(df, funs_(statistics_funs), summary)
+      dplyr::summarise_each(df, dplyr::funs_(statistics_funs), summary)
     
     
   } else {
@@ -246,15 +251,16 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
   }
   
   call_empirical_function <- function(df) {
-    summarise_(df, .dots = setNames(empirical_dots, "summary")) 
+    dplyr::summarise_(df, .dots = setNames(empirical_dots, "summary")) 
   }
   
   booted_data <- multi_boot(data, summary_function = call_empirical_function, 
                             column, statistics_functions = statistics_formulas, 
                             nboot = nboot)
   
-  left_join(call_empirical_function(data), booted_data) %>%
-    rename_(.dots = setNames("summary",empirical_function))
+  call_empirical_function(data) %>%
+    dplyr::left_join(booted_data) %>%
+    dplyr::rename_(.dots = setNames("summary", empirical_function))
 }
 
 #' Non-parametric bootstrap with multiple sample statistics
@@ -269,4 +275,5 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
 #' @examples
 #' ## List of available methods
 #' methods(multi_boot)
+#' @export
 multi_boot <- function(data, ...) UseMethod("multi_boot")
