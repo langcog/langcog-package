@@ -94,44 +94,41 @@ ggcorplot <- function(data,
   
   # ggplot 2 layers ----------------------------
   # used to be jitter, but this obscures data structure if used naively
-  points_layer <- ggplot2::layer(geom = "point",
-                                 data = z,
-                                 mapping = ggplot2::aes(x = x, y = y))
+  points_layer <- ggplot2::geom_point(mapping = ggplot2::aes(x = x, y = y),
+                                      data = z)
   
-  lm_line_layer <- ggplot2::layer(geom = "line",
-                                  geom_params = list(colour = "red"),
-                                  stat = "smooth",
-                                  stat_params = list(method = "lm"),
-                                  data = z,
-                                  mapping = ggplot2::aes(x = x, y = y))
+  lm_line_layer <- ggplot2::geom_smooth(mapping = ggplot2::aes(x = x, y = y),
+                                        data = z,
+                                        stat = "smooth",
+                                        method = "lm",
+                                        colour = "red")
   
-  lm_ribbon_layer <- ggplot2::layer(geom = "ribbon",
-                                    geom_params = list(fill = "green",
-                                                       alpha = .5),
-                                    stat = "smooth",
-                                    stat_params = list(method = "lm"),
-                                    data = z,
-                                    mapping = ggplot2::aes(x = x, y = y))
+  lm_ribbon_layer <- ggplot2::geom_ribbon(mapping = ggplot2::aes(x = x, y = y),
+                                          data = z,
+                                          stat = "smooth",
+                                          method = "lm",
+                                          fill = "green",
+                                          alpha = .5)
   
-  cor_text <- ggplot2::layer(geom = "text", data = z_cor,
-                             mapping = ggplot2::aes_string(x = "y_mid",
-                                                           y = "x_mid",
-                                                           label = "cor",
-                                                           size = "rsq",
-                                                           colour = "p"))
+  cor_text <- ggplot2::geom_text(mapping = ggplot2::aes_string(x = "y_mid",
+                                                               y = "x_mid",
+                                                               label = "cor",
+                                                               size = "rsq",
+                                                               colour = "p"),
+                                 data = z_cor)
   
-  var_text <- ggplot2::layer(geom = "text",
-                             geom_params = list(size = var_text_size),
-                             data = diag,
-                             mapping = ggplot2::aes_string(x = "y_mid",
-                                                           y = "x_mid",
-                                                           label = "x_lab"))
+  var_text <- ggplot2::geom_text(mapping = ggplot2::aes_string(x = "y_mid",
+                                                               y = "x_mid",
+                                                               label = "x_lab"),
+                                 data = diag,
+                                 size = var_text_size)
   
   ggplot2::ggplot() +
     points_layer +
     lm_ribbon_layer + lm_line_layer +
     var_text + cor_text +
     ggplot2::facet_grid(y_lab ~ x_lab, scales = "free") +
+    ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
                    panel.grid.major = ggplot2::element_blank(),
                    axis.ticks = ggplot2::element_blank(),

@@ -1,7 +1,7 @@
 Package: langcog
 Type: Package
 Title: Language and Cognition Lab Things
-Version: 0.1
+Version: 0.1.9000
 Authors@R: c(person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
              person("Dan", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut")),
              person("Michael", "Frank", email = "mcfrank@stanford.edu", role = c("aut")))
