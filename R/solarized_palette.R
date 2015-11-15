@@ -13,7 +13,7 @@
 #' }
 #' @export
 solarized_palette <- function(num_values) {
-  
+
   solarized_colors <- c(magenta = "#d33682",
                         red = "#dc322f",
                         orange = "#cb4b16",
@@ -23,10 +23,10 @@ solarized_palette <- function(num_values) {
                         blue = "#268bd2",
                         violet = "#6c71c4",
                         purple = "#993399")
-  
+
   color_order <- c("blue", "orange", "green", "purple", "magenta",
                    "yellow", "cyan", "violet", "red")
-  
+
   num_colors <- length(color_order)
   num_color_values <- num_values %% num_colors
   palette <- c(rep(solarized_colors, num_values %/% num_colors),
@@ -36,7 +36,7 @@ solarized_palette <- function(num_values) {
                )])
   names(palette) <- NULL
   return(palette)
-  
+
 }
 
 
@@ -60,23 +60,25 @@ scale_colour_solarized <- function(...) {
 }
 
 #' @rdname scale_colour_solarized
+#' @export
 scale_color_solarized <- function(...) {
   scale_colour_solarized(...)
 }
 
 #' @rdname scale_colour_solarized
+#' @export
 scale_fill_solarized <- function(...) {
   ggplot2::discrete_scale("fill", "solarized", solarized_palette, ...)
 }
 
 #' ggplot2 theme
-#' 
+#'
 #' Has the same theme options as \code{\link[ggplot2]{theme_bw}}, except for different
 #' defaults for \code{base_size} and \code{base_family}, and no minor gridlines.
-#' 
+#'
 #' @param base_size base font size
 #' @param base_family base font family
-#'   
+#'
 #' @examples
 #' \dontrun{
 #' library(ggplot2)
