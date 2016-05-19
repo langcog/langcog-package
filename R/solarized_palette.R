@@ -90,6 +90,8 @@ scale_fill_solarized <- function(...) {
 theme_mikabr <- function(base_size = 14, base_family = "Open Sans") {
   ggplot2::`%+replace%`(
     ggplot2::theme_bw(base_size = base_size, base_family = base_family),
-    ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
+    ggplot2::theme(panel.grid = ggplot2::element_blank(),
+                   strip.background = ggplot2::element_blank(),
+                   legend.key = ggplot2::element_blank())
   )
 }
