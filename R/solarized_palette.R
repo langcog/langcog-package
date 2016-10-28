@@ -28,14 +28,15 @@ solarized_palette <- function(num_values) {
                    "yellow", "cyan", "violet", "red")
 
   num_colors <- length(color_order)
-  num_color_values <- num_values %% num_colors
-  palette <- c(rep(solarized_colors, num_values %/% num_colors),
-               solarized_colors[Filter(
-                 function(color) color %in% color_order[0:num_color_values],
-                 names(solarized_colors)
-               )])
-  names(palette) <- NULL
-  return(palette)
+  if (num_values < num_colors) {
+    unname(solarized_colors[Filter(
+      function(color) color %in% color_order[1:num_values],
+      names(solarized_colors)
+    )])
+  } else {
+    color_indeces <- 0:(num_values - 1) %% num_colors
+    unname(solarized_colors[color_indeces + 1])
+  }
 
 }
 
