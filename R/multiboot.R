@@ -43,7 +43,7 @@ multi_boot.numeric <- function(data,
   
   if (length(statistics_functions) == 1) {
     all_samples <- all_samples %>%
-      dplyr::rename_(.dots = setNames("sample", statistics_functions))
+      dplyr::rename_(.dots = stats::setNames("sample", statistics_functions))
   }
   
   return(all_samples)
@@ -140,7 +140,7 @@ multi_boot.data.frame <- function(data,
                                           fun = as.name(summary_function),
                                           arg = as.name(column)))
     call_summary_function <- function(df) {
-      dplyr::summarise_(df, .dots = setNames(summary_dots, "summary"))
+      dplyr::summarise_(df, .dots = stats::setNames(summary_dots, "summary"))
     }
   }
   
@@ -184,8 +184,8 @@ multi_boot.data.frame <- function(data,
   if (typeof(statistics_functions) == "character" &
       length(statistics_functions) == 1) {
     booted_vals <- dplyr::rename_(booted_vals,
-                                  .dots = setNames("summary",
-                                                   statistics_functions))
+                                  .dots = stats::setNames("summary",
+                                                          statistics_functions))
   }
   
   return(booted_vals)
@@ -251,7 +251,7 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
   }
   
   call_empirical_function <- function(df) {
-    dplyr::summarise_(df, .dots = setNames(empirical_dots, "summary")) 
+    dplyr::summarise_(df, .dots = stats::setNames(empirical_dots, "summary")) 
   }
   
   booted_data <- multi_boot(data, summary_function = call_empirical_function, 
@@ -260,7 +260,7 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
   
   call_empirical_function(data) %>%
     dplyr::left_join(booted_data) %>%
-    dplyr::rename_(.dots = setNames("summary", empirical_function))
+    dplyr::rename_(.dots = stats::setNames("summary", empirical_function))
 }
 
 #' Non-parametric bootstrap with multiple sample statistics

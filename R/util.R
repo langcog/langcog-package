@@ -16,7 +16,7 @@ sem <- function(x, na.rm = FALSE) {
   } else {
     n <- length(x)
   }
-  sd(x, na.rm = na.rm) / sqrt(n)
+  stats::sd(x, na.rm = na.rm) / sqrt(n)
 }
 
 #' Confidence interval (lower)
@@ -32,7 +32,7 @@ sem <- function(x, na.rm = FALSE) {
 #' ci_lower(x)
 #' @export
 ci_lower <- function(x, na.rm = FALSE) {
-  quantile(x, 0.025, na.rm)
+  stats::quantile(x, 0.025, na.rm)
 }
 
 #' Confidence interval (upper)
@@ -48,7 +48,7 @@ ci_lower <- function(x, na.rm = FALSE) {
 #' ci_upper(x)
 #' @export
 ci_upper <- function(x, na.rm = FALSE) {
-  quantile(x, 0.975, na.rm)
+  stats::quantile(x, 0.975, na.rm)
 }
 
 #' Significance stars

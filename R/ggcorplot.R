@@ -67,9 +67,9 @@ ggcorplot <- function(data,
       y <- data[,j]
       x_mid <- min(x) + diff(range(x)) / 2
       y_mid <- min(y) + diff(range(y)) / 2
-      this_cor <- cor(x,y)
+      this_cor <- stats::cor(x,y)
       this_cor.test <- 0
-      this_cor.test <- cor.test(x, y)
+      this_cor.test <- stats::cor.test(x, y)
       this_col <- ifelse(this_cor.test$p.value < .05, "<.05", ">.05")
       this_size <- (this_cor) ^ 2
       cor_text <- ifelse(this_cor > 0,
@@ -152,7 +152,7 @@ ggcorplot <- function(data,
 #' ezLev(x, c(3,1,2))
 ezLev <- function(x, new_order){
   for (i in rev(new_order)) {
-    x <- relevel(x, ref = i)
+    x <- stats::relevel(x, ref = i)
   }
   return(x)
 }
