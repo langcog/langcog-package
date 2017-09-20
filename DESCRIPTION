@@ -17,6 +17,9 @@ Imports:
   ggplot2,
   quadprog,
   lazyeval,
-  assertthat
+  assertthat,
+  Hmisc,
+  rlang
 Suggests:
   scales
+RoxygenNote: 6.0.1
